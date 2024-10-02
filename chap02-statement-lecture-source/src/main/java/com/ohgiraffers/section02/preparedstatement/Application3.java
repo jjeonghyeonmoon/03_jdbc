@@ -1,49 +1,39 @@
-package com.ohgiraffers.section01.statement;
+package com.ohgiraffers.section02.preparedstatement;
 
 import com.ohgiraffers.model.dto.EmployeeDTO;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.Queue;
 import java.util.Scanner;
 
 import static com.ohgiraffers.common.JDBCTemplate.close;
 import static com.ohgiraffers.common.JDBCTemplate.getConnection;
 
-public class Application4 {
+public class Application3 {
 
     public static void main(String[] args) {
 
-        /* title. 전체 사원 정보를 EmployeeDTO 를 통해 객체에 담아서 출력
-         *   */
-
-
         Connection con = getConnection();
-
-        Statement stmt = null;
-
+        PreparedStatement pstmt = null;
         ResultSet rset = null;
-        // 회원 한 명의 정보를 담을 DTO
+
+        // 1명의 회원정보를 관리할 EmployeeDTO 사용
         EmployeeDTO emp = null;
-        // 한명의 정보들을 하나의 인스턴스로 묶기 위한 List
-        List<EmployeeDTO> empList = null;
 
+        Scanner sc = new Scanner(System.in);
+        System.out.print("조회하실 사번을 입력해주세요 : ");
+        String empId = sc.nextLine();
 
-        String query = "SELECT * FROM EMPLOYEE ";
+        String query = "SELECT * FROM EMPLOYEE WHERE EMP_ID = ?";
 
         try {
-            stmt = con.createStatement();
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1,empId);
 
-            rset = stmt.executeQuery(query);
+             rset = pstmt.executeQuery();
 
-            empList = new ArrayList<>();
-
-            /* 조회한 결과를 객체에 담기 */
-            while (rset.next()) {
-                emp = new EmployeeDTO();
+             if (rset.next());{
+                 emp = new EmployeeDTO();
 
                 emp.setEmpId(rset.getString("EMP_ID"));
                 emp.setEmpName(rset.getString("EMP_NAME"));
@@ -60,21 +50,18 @@ public class Application4 {
                 emp.setEntDate(rset.getDate("ENT_DATE"));
                 emp.setEntYn(rset.getString("ENT_YN"));
 
-                empList.add(emp);
-            }
+             }
+
 
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(rset);
-            close(stmt);
+        }finally {
+            close(pstmt);
             close(con);
+            close(rset);
         }
-        for (EmployeeDTO oneEmployee : empList) {
-            System.out.println("oneEmployee = " + oneEmployee);
-        }
-
+        System.out.println("emp = " + emp);
 
     }
 
