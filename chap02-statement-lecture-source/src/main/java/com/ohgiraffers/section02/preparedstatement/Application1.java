@@ -34,7 +34,7 @@ public class Application1 {
         // 쿼리문 실행 결과
         ResultSet rset = null;
 
-        String query = "SELECT EMP_ID,EMP_NAME FROM EMPLOYEE";
+            String query = "SELECT EMP_ID,EMP_NAME FROM EMPLOYEE";
 
         try {
             pstmt = con.prepareStatement(query);
@@ -42,7 +42,7 @@ public class Application1 {
             rset = pstmt.executeQuery();
 
             while (rset.next()){
-                System.out.println(rset.getString("EMP_ID") + " 번" + rset.getString("EMP_NAME"));
+                System.out.println(rset.getString("EMP_ID") + "번 " + rset.getString("EMP_NAME"));
             }
 
 
